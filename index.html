@@ -12,6 +12,7 @@
   <meta name="author" content="Pruthviraj Tarode">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://pruthvirajtarode.github.io/">
+  <link rel="icon" type="image/png" href="https://pruthvirajtarode.github.io/MyPhoto_coat.png">
 
   <!-- ===== Open Graph / Facebook / LinkedIn ===== -->
   <meta property="og:type" content="profile">
@@ -117,7 +118,13 @@
       color: var(--text-main);
       line-height: 1.6;
       overflow-x: hidden;
-      cursor: none; /* Custom cursor */
+      cursor: default;
+    }
+
+    /* Hide custom cursor on touch devices and when hover not available */
+    @media (hover: none) {
+      .cursor-dot, .cursor-outline { display: none !important; }
+      body { cursor: default; }
     }
 
     /* Custom Scrollbar */
@@ -125,6 +132,14 @@
     ::-webkit-scrollbar-track { background: var(--bg-dark); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+    /* Skip link for keyboard users */
+    .skip-link {
+      position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    }
+    .skip-link:focus {
+      position: fixed; left: 16px; top: 16px; width: auto; height: auto; padding: 0.5rem 0.75rem; background: #111; color: #fff; z-index: 10010; border-radius: 6px; text-decoration: none;
+    }
 
     /* Custom Cursor */
     .cursor-dot, .cursor-outline {
@@ -183,7 +198,11 @@
     }
 
     /* Typography */
-    h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; letter-spacing: -0.03em; }
+    /* Responsive type scale */
+    h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.1; letter-spacing: -0.03em; }
+    h1 { font-size: clamp(2rem, 5vw + 1rem, 5rem); }
+    h2 { font-size: clamp(1.25rem, 3.5vw + 0.5rem, 2.5rem); }
+    h3 { font-size: clamp(1rem, 2.5vw + 0.25rem, 1.5rem); }
     .gradient-text {
       background: linear-gradient(135deg, #fff 0%, #a0a0ab 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -205,6 +224,13 @@
       position: relative;
       overflow: hidden;
     }
+
+    /* Reduce heavy backdrop-filter on low-power or small devices for smoother rendering */
+    @media (max-width: 768px), (prefers-reduced-motion: reduce) {
+      .glass-card { backdrop-filter: none; -webkit-backdrop-filter: none; padding: 1.5rem; }
+      .aurora-blob { filter: blur(60px); }
+      .hero-glow { display: none; }
+    }
     .glass-card::before {
       content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
@@ -216,6 +242,8 @@
     /* Layout */
     .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
     section { padding: 8rem 0; position: relative; }
+    /* Reduce vertical padding on smaller screens for quicker scroll-to-content */
+    @media (max-width: 768px) { section { padding: 4rem 0; } }
     .section-title { font-size: 3.5rem; margin-bottom: 1rem; text-align: center; }
     .section-subtitle { text-align: center; color: var(--text-muted); font-size: 1.2rem; margin-bottom: 4rem; }
 
@@ -255,6 +283,7 @@
        ========================================================================== */
     .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 5rem; }
     .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .hero-content h1 { margin-bottom: 1rem; }
     .hero-content h1 { font-size: 5rem; line-height: 1.1; margin-bottom: 1.5rem; }
     .typing-container { font-size: 1.8rem; color: var(--text-muted); font-family: var(--font-display); margin-bottom: 2rem; height: 2.2rem; }
     .typing-text { color: var(--accent-1); font-weight: 600; }
@@ -265,9 +294,18 @@
     
     .hero-image-wrapper { position: relative; }
     .hero-image { width: 100%; max-width: 500px; border-radius: 30px; object-fit: cover; z-index: 2; position: relative; }
+    .hero-image { width: 100%; height: auto; display: block; }
+    /* Reserve space to reduce layout shift (adjust if your source images have different aspect ratios) */
+    .hero-image { aspect-ratio: 4/5; max-width: 520px; }
     .hero-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120%; height: 120%; background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%); z-index: 1; }
     /* Hide vanilla-tilt glare on hero image */
     .hero-image-wrapper .js-tilt-glare { display: none !important; }
+    /* On mobile: text first, image second */
+    @media (max-width: 768px) {
+      .hero-content    { order: 1; }
+      .hero-image-wrapper { order: 2; max-width: 280px; margin: 0 auto; }
+      .hero-image { max-width: 100%; aspect-ratio: 1/1; border-radius: 50%; object-position: top; }
+    }
     
     .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 3rem; }
     .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 20px; backdrop-filter: blur(10px); }
@@ -287,8 +325,10 @@
     .achievement-card:hover { border-color: rgba(245, 158, 11, 0.6); box-shadow: 0 0 60px rgba(245, 158, 11, 0.2); }
     .achievement-img-wrapper { height: 100%; position: relative; }
     .achievement-img { width: 100%; height: 100%; object-fit: cover; }
+    /* Ensure achievement image reserves reasonable height to avoid CLS */
+    .achievement-img-wrapper { min-height: 220px; }
     .achievement-img-wrapper::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 30%; background: linear-gradient(to right, transparent, rgba(15,15,20,0.9)); }
-    .achievement-content { padding: 4rem 4rem 4rem 0; }
+    .achievement-content { padding: 4rem 8rem 4rem 0; }
     
     .badge-gold {
       display: inline-flex; align-items: center; gap: 0.5rem;
@@ -373,6 +413,38 @@
     .exp-details h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
     .exp-company { color: var(--accent-3); font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; }
     .exp-date { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+
+    /* Experience card badge (e.g. INTERNATIONAL · USA) */
+    .card-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(236,72,153,0.2));
+      border: 1px solid rgba(99,102,241,0.45);
+      color: #a5b4fc;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.25);
+      z-index: 2;
+    }
+    /* On mobile the badge wraps or stays compact; ensure it doesn't overlap content */
+    @media (max-width: 480px) {
+      .card-badge {
+        font-size: 0.62rem;
+        padding: 0.25rem 0.6rem;
+        top: 0.75rem;
+        right: 0.75rem;
+      }
+    }
     
     /* ==========================================================================
        Certifications
@@ -400,6 +472,10 @@
     #scrollTop { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: #fff; color: #000; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; opacity: 0; pointer-events: none; transition: var(--transition); z-index: 1000; }
     #scrollTop.visible { opacity: 1; pointer-events: auto; }
     #scrollTop:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+    /* On mobile adjust scroll-to-top to the LEFT */
+    @media (max-width: 768px) {
+      #scrollTop { right: auto; left: 18px; bottom: 18px; width: 44px; height: 44px; font-size: 1rem; }
+    }
 
     /* Lightbox */
     .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
@@ -414,7 +490,7 @@
       .hero-grid, .achievement-card, .award-grid, .contact-grid { grid-template-columns: 1fr; }
       .achievement-img-wrapper { height: 300px; }
       .achievement-img-wrapper::after { width: 100%; background: linear-gradient(to bottom, transparent, rgba(15,15,20,0.9)); }
-      .achievement-content { padding: 2rem; }
+      .achievement-content { padding: 2rem 5rem 2rem 2rem; }
       .timeline-wrap::before { left: 0; }
       .timeline-item { width: 100%; padding-left: 3rem; padding-right: 0; text-align: left !important; }
       .timeline-item:nth-child(even), .timeline-item:nth-child(odd) { left: 0; }
@@ -430,12 +506,15 @@
       .mobile-menu-btn { display: block; }
       .nav-links { display: none; }
       .nav-links.active { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(3, 3, 5, 0.95); padding: 2rem; backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--border-color); gap: 1.5rem; }
+      /* Make hero grid single column on tablet and center image */
+      .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-image-wrapper { display: flex; justify-content: center; }
       .masonry-grid { column-count: 1; }
       .stats-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
       .stat-num { font-size: 1.8rem; }
       .form-row { grid-template-columns: 1fr; }
       .section-title { font-size: 2rem; }
-      .achievement-content { padding: 1.5rem; }
+      .achievement-content { padding: 1.5rem 4.5rem 1.5rem 1.5rem; }
       .achievement-content h2 { font-size: 2rem; }
       section { padding: 5rem 0; }
       /* All grids go single column on mobile */
@@ -454,16 +533,582 @@
       .section-subtitle { font-size: 1rem; margin-bottom: 2.5rem; }
     }
     @media (max-width: 480px) {
-      .hero-content h1 { font-size: 2rem; }
+      .hero-content h1 { font-size: 1.8rem; }
       .container { padding: 0 1rem; }
       .glass-card { padding: 1.2rem; border-radius: 16px; }
       .section-title { font-size: 1.8rem; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .stat-num { font-size: 1.5rem; }
+      /* Make touch targets larger */
+      .btn { padding: 0.9rem 1.4rem; }
+    }
+
+    /* ==========================================================================
+       AI Chatbot — Recruiter-Grade Premium Design (Right Side)
+       ========================================================================== */
+
+    /* --- Launcher Button (RIGHT SIDE) --- */
+    #chatbot-launcher {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      border: none;
+      cursor: pointer;
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 30px rgba(99,102,241,0.6), 0 0 0 0 rgba(99,102,241,0.4);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s;
+      animation: launcherFloat 3s ease-in-out infinite, launcherRipple 2.5s ease-out infinite;
+    }
+    #chatbot-launcher:hover {
+      transform: scale(1.18) rotate(8deg);
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.25), 0 16px 48px rgba(99,102,241,0.9), 0 0 80px rgba(236,72,153,0.3);
+    }
+    #chatbot-launcher.open {
+      animation: none;
+      background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+      box-shadow: 0 8px 30px rgba(239,68,68,0.5);
+    }
+    #chatbot-launcher.open:hover { transform: scale(1.1) rotate(-90deg); }
+
+    /* Float up-down */
+    @keyframes launcherFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33%       { transform: translateY(-10px) rotate(3deg); }
+      66%       { transform: translateY(-5px) rotate(-2deg); }
+    }
+    /* Dual ripple pulse rings */
+    @keyframes launcherRipple {
+      0%   { box-shadow: 0 8px 30px rgba(99,102,241,0.6), 0 0 0 0 rgba(99,102,241,0.5), 0 0 0 0 rgba(236,72,153,0.3); }
+      50%  { box-shadow: 0 8px 30px rgba(99,102,241,0.6), 0 0 0 18px rgba(99,102,241,0), 0 0 0 8px rgba(236,72,153,0.1); }
+      100% { box-shadow: 0 8px 30px rgba(99,102,241,0.6), 0 0 0 28px rgba(99,102,241,0), 0 0 0 28px rgba(236,72,153,0); }
+    }
+
+    /* Sparkle ring around launcher */
+    #chatbot-launcher::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #6366f1, #8b5cf6, #ec4899, #14b8a6, #6366f1);
+      z-index: -1;
+      animation: spinRing 4s linear infinite;
+      opacity: 0.7;
+    }
+    #chatbot-launcher.open::before { display: none; }
+    @keyframes spinRing {
+      to { transform: rotate(360deg); }
+    }
+
+    #chatbot-launcher .chat-icon  { font-size: 1.8rem; color: #fff; display: flex; transition: all 0.3s; }
+    #chatbot-launcher .close-icon { font-size: 1.5rem; color: #fff; display: none; }
+    #chatbot-launcher.open .chat-icon  { display: none; }
+    #chatbot-launcher.open .close-icon { display: flex; }
+
+    /* Recruiter label badge above launcher */
+    #chatbot-recruiter-badge {
+      position: fixed;
+      bottom: 112px;
+      right: 20px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.5);
+      animation: badgePop 2s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 9997;
+    }
+    @keyframes badgePop {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    #chatbot-recruiter-badge.hidden { display: none; }
+
+    /* Waving hand (RIGHT side) */
+    #chatbot-wave {
+      position: fixed;
+      bottom: 96px;
+      right: 26px;
+      font-size: 1.7rem;
+      z-index: 9999;
+      pointer-events: none;
+      animation: waveHand 1.6s ease-in-out infinite;
+      transform-origin: 70% 80%;
+    }
+    @keyframes waveHand {
+      0%,100% { transform: rotate(0deg); }
+      20%     { transform: rotate(25deg); }
+      40%     { transform: rotate(-12deg); }
+      60%     { transform: rotate(22deg); }
+      80%     { transform: rotate(-6deg); }
+    }
+    #chatbot-wave.hidden { display: none; }
+
+    /* Rotating greeting bubbles (RIGHT side — text to the LEFT of launcher) */
+    #chatbot-greeting {
+      position: fixed;
+      bottom: 118px;
+      right: 112px;
+      z-index: 9997;
+      pointer-events: none;
+    }
+    /* ensure greeting bubbles wrap on smaller viewports */
+    .greeting-bubble { white-space: normal; }
+    .greeting-bubble {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      border-bottom-right-radius: 4px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 8px 28px rgba(99,102,241,0.55), 0 2px 8px rgba(236,72,153,0.3);
+      backdrop-filter: blur(10px);
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      opacity: 0;
+      transform: translateY(10px) scale(0.88);
+      transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .greeting-bubble.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    /* Arrow pointing RIGHT toward launcher */
+    .greeting-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      right: -9px;
+      width: 0; height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 10px solid #8b5cf6;
+    }
+
+    /* --- Chat Window (RIGHT side) --- */
+    #chatbot-window {
+      position: fixed;
+      bottom: 118px;
+      right: 32px;
+      width: 410px;
+      height: 600px;
+      background:
+        radial-gradient(ellipse at top left, rgba(99,102,241,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom right, rgba(236,72,153,0.08) 0%, transparent 60%),
+        linear-gradient(160deg, rgba(8,8,20,0.99) 0%, rgba(4,4,14,1) 100%);
+      backdrop-filter: blur(50px);
+      -webkit-backdrop-filter: blur(50px);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 28px;
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 40px 100px rgba(0,0,0,0.9),
+        0 0 80px rgba(99,102,241,0.15),
+        0 0 40px rgba(236,72,153,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -1px 0 rgba(99,102,241,0.1);
+      transform: scale(0.88) translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
+      user-select: none;
+    }
+    #chatbot-window.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Animated rainbow top border */
+    #chatbot-window::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899, #f59e0b, #14b8a6, #6366f1);
+      background-size: 400% 100%;
+      animation: shimmerBorder 2.5s linear infinite;
+      border-radius: 28px 28px 0 0;
+      z-index: 10;
+    }
+    @keyframes shimmerBorder {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 400% 0%; }
+    }
+
+    /* Premium header */
+    .chatbot-header {
+      background: linear-gradient(135deg,
+        rgba(99,102,241,0.22) 0%,
+        rgba(139,92,246,0.14) 40%,
+        rgba(236,72,153,0.1) 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1rem 1.3rem 1rem 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-shrink: 0;
+      cursor: grab;
+      position: relative;
+      overflow: hidden;
+    }
+    .chatbot-header:active { cursor: grabbing; }
+    /* Moving light sweep on header */
+    .chatbot-header::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; right: 0; bottom: 0;
+      width: 50%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+      animation: headerSweep 3.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes headerSweep {
+      0%   { left: -60%; }
+      100% { left: 160%; }
+    }
+
+    /* Status bar below header title */
+    .chatbot-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: rgba(160,160,171,0.85);
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #22c55e;
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+    @keyframes statusPulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .chatbot-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #fff;
+      flex-shrink: 0;
+      position: relative;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.3), 0 0 24px rgba(99,102,241,0.6);
+      animation: avatarGlow 2.5s ease-in-out infinite;
+    }
+    @keyframes avatarGlow {
+      0%,100% { box-shadow: 0 0 0 3px rgba(99,102,241,0.3), 0 0 20px rgba(99,102,241,0.5); }
+      50%      { box-shadow: 0 0 0 4px rgba(236,72,153,0.4), 0 0 36px rgba(236,72,153,0.5); }
+    }
+    .chatbot-avatar::after {
+      content: '';
+      position: absolute;
+      bottom: 1px; right: 1px;
+      width: 12px; height: 12px;
+      background: #22c55e;
+      border-radius: 50%;
+      border: 2px solid rgba(8,8,20,0.99);
+      box-shadow: 0 0 8px rgba(34,197,94,0.9);
+    }
+    .chatbot-header-info { flex: 1; min-width: 0; }
+    .chatbot-header-info h4 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+      font-family: var(--font-display);
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, #fff 60%, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .chatbot-drag-hint {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+      padding: 4px;
+    }
+    .chatbot-drag-hint i { font-size: 0.9rem; }
+
+    /* Messages area */
+    .chatbot-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      scroll-behavior: smooth;
+    }
+    .chatbot-messages::-webkit-scrollbar { width: 4px; }
+    .chatbot-messages::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 4px; }
+
+    .chat-msg {
+      display: flex;
+      gap: 0.55rem;
+      align-items: flex-end;
+      animation: msgSlideIn 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes msgSlideIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .chat-msg.user { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+    }
+    .chat-msg.bot  .msg-avatar { background: linear-gradient(135deg, #6366f1, #ec4899); color: #fff; }
+    .chat-msg.user .msg-avatar { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #fff; }
+    .msg-bubble {
+      max-width: 80%;
+      padding: 0.8rem 1rem;
+      border-radius: 18px;
+      font-size: 0.875rem;
+      line-height: 1.65;
+    }
+    .chat-msg.bot .msg-bubble {
+      background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08));
+      border: 1px solid rgba(99,102,241,0.22);
+      border-bottom-left-radius: 5px;
+      color: #dde0ff;
+    }
+    .chat-msg.user .msg-bubble {
+      background: linear-gradient(135deg, rgba(99,102,241,0.55), rgba(236,72,153,0.35));
+      border: 1px solid rgba(99,102,241,0.4);
+      border-bottom-right-radius: 5px;
+      color: #fff;
+    }
+    .msg-bubble strong { color: #c4b5fd; }
+    .msg-bubble a { color: #5eead4; text-decoration: underline; font-weight: 600; }
+    /* Timestamp on messages */
+    .msg-time {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.3);
+      margin-top: 0.25rem;
+      padding: 0 0.2rem;
+    }
+    .chat-msg.user .msg-time { text-align: right; }
+    .chat-msg.bot  .msg-time { text-align: left; }
+
+    /* Typing indicator */
+    .chat-typing {
+      display: flex;
+      gap: 0.55rem;
+      align-items: center;
+      padding: 0 1.2rem;
+      flex-shrink: 0;
+    }
+    .typing-dots {
+      display: flex;
+      gap: 5px;
+      background: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(139,92,246,0.08));
+      border: 1px solid rgba(99,102,241,0.22);
+      padding: 0.7rem 1rem;
+      border-radius: 18px;
+      border-bottom-left-radius: 5px;
+    }
+    .typing-dots span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      animation: typingDot 1.4s infinite ease-in-out;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+      0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+      30%          { transform: translateY(-7px); opacity: 1; }
+    }
+
+    /* Suggestion chips */
+    .chatbot-suggestions {
+      padding: 0.55rem 1.2rem;
+      display: flex;
+      gap: 0.45rem;
+      overflow-x: auto;
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .chatbot-suggestions::-webkit-scrollbar { display: none; }
+    .suggestion-chip {
+      white-space: nowrap;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.28);
+      color: #a5b4fc;
+      padding: 0.38rem 0.85rem;
+      border-radius: 100px;
+      font-size: 0.77rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      font-weight: 600;
+      font-family: var(--font-sans);
+    }
+    .suggestion-chip:hover {
+      background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(236,72,153,0.2));
+      border-color: rgba(99,102,241,0.6);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+    }
+
+    /* Input area */
+    .chatbot-input-area {
+      padding: 0.9rem 1.2rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      gap: 0.55rem;
+      align-items: center;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.015);
+    }
+    #chatbot-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 0.72rem 1.2rem;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    #chatbot-input:focus { border-color: #6366f1; background: rgba(99,102,241,0.07); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+    #chatbot-input::placeholder { color: rgba(255,255,255,0.28); }
+    #chatbot-send {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      transition: transform 0.25s, box-shadow 0.25s;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+    }
+    #chatbot-send:hover { transform: scale(1.12) rotate(-8deg); box-shadow: 0 6px 20px rgba(99,102,241,0.6); }
+    #chatbot-send:active { transform: scale(0.95); }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      #chatbot-window         { width: calc(100vw - 16px); right: 8px; left: auto; bottom: 100px; height: 72vh; }
+      #chatbot-launcher       { right: 18px; bottom: 18px; width: 64px; height: 64px; }
+      #chatbot-wave           { right: 16px; bottom: 90px; }
+      #chatbot-greeting       { right: 104px; bottom: 102px; }
+      #chatbot-recruiter-badge{ right: 14px; bottom: 106px; }
+    }
+
+    /* Floating wrapper: stack chatbot elements vertically to avoid collisions with page content */
+    #chatbot-floating {
+      position: fixed;
+      /* move the stack slightly left and up from the extreme corner to avoid overlaying page content */
+      bottom: 48px;
+      right: 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      z-index: 10001;
+      pointer-events: none; /* let children opt-in to pointer events */
+    }
+    /* allow interactive children (launcher/button/input) to receive clicks */
+    #chatbot-floating > * { pointer-events: auto; }
+
+    /* make individual parts flow inside wrapper instead of absolute positions */
+    #chatbot-recruiter-badge, #chatbot-wave, #chatbot-greeting, #chatbot-launcher {
+      position: relative !important;
+      right: 0 !important;
+      bottom: 0 !important;
+    }
+    
+    #chatbot-greeting {
+      height: 44px; /* Give it height so it takes up space in the flex column and doesn't overlap the badge */
+      width: 100%;
+    }
+
+    /* Restrict greeting bubble width and improve legibility */
+    .greeting-bubble {
+      max-width: 240px;
+      font-size: 0.86rem;
+      padding: 0.5rem 0.9rem;
+      text-align: left;
+    }
+    .greeting-bubble::after { right: -9px; }
+
+    /* Prevent long badge text from overflowing the layout */
+    #chatbot-recruiter-badge { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Slightly reduce launcher size to minimize footprint */
+    #chatbot-launcher { width: 64px; height: 64px; }
+
+    /* mobile adjustments for wrapper */
+    @media (max-width: 1280px) {
+      /* on narrower viewports move the stack back to the corner */
+      #chatbot-floating { right: 28px; }
+    }
+    @media (max-width: 768px) {
+      /* Move chatbot to the right corner; scrollTop button is on the left — no collision */
+      #chatbot-floating { right: 16px; bottom: 16px; gap: 8px; }
+      #chatbot-launcher { width: 58px; height: 58px; }
+      #chatbot-recruiter-badge { display: none; } /* hide badge on small screens to reduce clutter */
+      #chatbot-greeting { display: none; }        /* completely hide greeting container to prevent empty gap */
+      .greeting-bubble { display: none; }         /* hide greeting bubbles on mobile */
+      #chatbot-wave { display: none; }            /* hide wave emoji on mobile */
+    }
+    @media (max-width: 480px) {
+      #chatbot-floating { right: 12px; bottom: 12px; }
+      #chatbot-greeting { order: -3; }
+    }
+    /* ensure chat window displays above the floating launcher and badges */
+    #chatbot-window { z-index: 10002 !important; }
+    /* Mobile chat window: full width, positioned so it doesn't go behind nav */
+    @media (max-width: 768px) {
+      #chatbot-window { width: calc(100vw - 24px); right: 12px; left: auto; bottom: 90px; height: 75vh; max-height: 520px; }
     }
   </style>
 </head>
 <body>
+  <a href="#home" class="skip-link">Skip to content</a>
 
   <!-- Background Effects -->
   <div class="aurora-bg">
@@ -480,7 +1125,7 @@
   <nav id="navbar">
     <div class="container nav-container">
       <a href="#" class="logo">
-        <img src="MyPhoto_coat.png" alt="Logo"> Pruthviraj
+        <img src="MyPhoto_coat.png" alt="Logo" loading="lazy"> Pruthviraj
       </a>
       <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('active')">
         <i class="fas fa-bars"></i>
@@ -541,7 +1186,7 @@
       
       <div class="hero-image-wrapper gs_reveal gs_reveal_fromRight">
         <div class="hero-glow"></div>
-        <img src="MyPhoto_coat.png" alt="Pruthviraj Tarode" class="hero-image">
+        <img src="MyPhoto_coat.png" alt="Pruthviraj Tarode" class="hero-image" loading="lazy">
       </div>
     </div>
   </section>
@@ -551,7 +1196,7 @@
     <div class="container">
       <div class="achievement-card glass-card gs_reveal">
         <div class="achievement-img-wrapper">
-          <img src="iit madras photo.jpeg" alt="IIT Madras" class="achievement-img">
+          <img src="iit madras photo.jpeg" alt="IIT Madras" class="achievement-img" loading="lazy">
         </div>
         <div class="achievement-content">
           <div class="badge-gold"><i class="fas fa-crown"></i> Prestigious Selection</div>
@@ -607,7 +1252,7 @@
           </div>
         </div>
         <div class="award-image-wrap gs_reveal gs_reveal_fromRight">
-          <img src="cash price photo.jpeg" alt="Cash Prize Award" class="award-img" data-tilt data-tilt-max="5">
+          <img src="cash price photo.jpeg" alt="Cash Prize Award" class="award-img" data-tilt data-tilt-max="5" loading="lazy">
         </div>
       </div>
     </div>
@@ -621,15 +1266,15 @@
       
       <div class="masonry-grid gs_reveal">
         <div class="masonry-item hover-target" onclick="openLightbox('iit madras photo.jpeg')">
-          <img src="iit madras photo.jpeg" alt="IIT Madras Campus">
+          <img src="iit madras photo.jpeg" alt="IIT Madras Campus" loading="lazy">
           <div class="masonry-caption">IIT Madras Research Fellowship</div>
         </div>
         <div class="masonry-item hover-target" onclick="openLightbox('cash price photo.jpeg')">
-          <img src="cash price photo.jpeg" alt="Award Ceremony">
+          <img src="cash price photo.jpeg" alt="Award Ceremony" loading="lazy">
           <div class="masonry-caption">₹25,000 Academic Excellence Award</div>
         </div>
         <div class="masonry-item hover-target" onclick="openLightbox('MyPhoto_coat.png')">
-          <img src="MyPhoto_coat.png" alt="Professional Portrait">
+          <img src="MyPhoto_coat.png" alt="Professional Portrait" loading="lazy">
           <div class="masonry-caption">Professional Profile</div>
         </div>
       </div>
@@ -702,7 +1347,7 @@
         <!-- Project 1 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="ai_travel_planner.png" alt="AI Travel Planner" class="project-img">
+            <img src="ai_travel_planner.png" alt="AI Travel Planner" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">AI Application</span>
@@ -722,7 +1367,7 @@
         <!-- Project 2 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="shopsense_ai.png" alt="ShopSense AI" class="project-img">
+            <img src="shopsense_ai.png" alt="ShopSense AI" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">Machine Learning</span>
@@ -742,7 +1387,7 @@
         <!-- Project 3 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="toonify_ai_saas.png" alt="Toonify AI" class="project-img">
+            <img src="toonify_ai_saas.png" alt="Toonify AI" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">Deep Learning SaaS</span>
@@ -764,7 +1409,7 @@
         <!-- Project 4 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="mario_shooter.png" alt="Mario Shooter Web Game" class="project-img">
+            <img src="mario_shooter.png" alt="Mario Shooter Web Game" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">Web Game</span>
@@ -783,7 +1428,7 @@
         <!-- Project 5 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="romania_ai.png" alt="Romania AI Pathfinder" class="project-img">
+            <img src="romania_ai.png" alt="Romania AI Pathfinder" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">AI Algorithm</span>
@@ -802,7 +1447,7 @@
         <!-- Project 6 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="wumpus_world.png" alt="Wumpus World Game" class="project-img">
+            <img src="wumpus_world.png" alt="Wumpus World Game" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">AI Logic Game</span>
@@ -821,7 +1466,7 @@
         <!-- Project 7 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="sweet_shop.png" alt="Sweet Shop Management" class="project-img">
+            <img src="sweet_shop.png" alt="Sweet Shop Management" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">Full Stack</span>
@@ -840,7 +1485,7 @@
         <!-- Project 8 -->
         <div class="project-card glass-card hover-target gs_reveal" data-tilt data-tilt-max="5" data-tilt-glare="true" data-tilt-max-glare="0.2">
           <div class="project-img-wrapper">
-            <img src="melissa_ai.png" alt="Melissa AI" class="project-img">
+            <img src="melissa_ai.png" alt="Melissa AI" class="project-img" loading="lazy">
           </div>
           <div class="project-content">
             <span class="project-type">NLP & AI</span>
@@ -870,13 +1515,13 @@
       <div class="projects-grid" style="grid-template-columns: 1fr;">
 
         <!-- Digital Dada - USA International (FEATURED) -->
-        <div class="glass-card gs_reveal hover-target" style="border-color: rgba(99,102,241,0.4); box-shadow: 0 0 30px rgba(99,102,241,0.15); position: relative; overflow: hidden;">
+        <div class="glass-card gs_reveal hover-target" style="border-color: rgba(99,102,241,0.4); box-shadow: 0 0 30px rgba(99,102,241,0.15); position: relative; overflow: hidden; padding-top: 3.5rem;">
           <!-- International badge -->
-          <div style="position: absolute; top: 1.2rem; right: 1.2rem; display: inline-flex; align-items: center; gap: 0.4rem; background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(236,72,153,0.2)); border: 1px solid rgba(99,102,241,0.5); color: #a5b4fc; padding: 0.3rem 0.8rem; border-radius: 100px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;">
+          <div class="card-badge">
             <i class="fas fa-globe-americas"></i> INTERNATIONAL &middot; USA
           </div>
           <div style="display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem;">
-            <img src="https://logo.clearbit.com/digital-dada.com" alt="Digital Dada Logo"
+            <img src="https://logo.clearbit.com/digital-dada.com" alt="Digital Dada Logo" loading="lazy"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
               style="width: 56px; height: 56px; border-radius: 12px; object-fit: contain; background: #fff; padding: 6px; flex-shrink: 0;">
             <div style="display:none; width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg,#6366f1,#8b5cf6); align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; color:#fff; flex-shrink:0;">DD</div>
@@ -903,7 +1548,7 @@
         <!-- Infosys -->
         <div class="glass-card gs_reveal hover-target">
           <div style="display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem;">
-            <img src="https://logo.clearbit.com/infosys.com" alt="Infosys Logo"
+            <img src="https://logo.clearbit.com/infosys.com" alt="Infosys Logo" loading="lazy"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
               style="width: 56px; height: 56px; border-radius: 12px; object-fit: contain; background: #fff; padding: 6px; flex-shrink: 0;">
             <div style="display:none; width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg,#007cc5,#0038a8); align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; color:#fff; flex-shrink:0;">IN</div>
@@ -925,7 +1570,7 @@
         <!-- Wixflux Technologies -->
         <div class="glass-card gs_reveal hover-target">
           <div style="display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem;">
-            <img src="https://logo.clearbit.com/wixflux.com" alt="Wixflux Logo"
+            <img src="https://logo.clearbit.com/wixflux.com" alt="Wixflux Logo" loading="lazy"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
               style="width: 56px; height: 56px; border-radius: 12px; object-fit: contain; background: #fff; padding: 6px; flex-shrink: 0;">
             <div style="display:none; width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg,#6366f1,#ec4899); align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; color:#fff; flex-shrink:0;">WX</div>
@@ -947,7 +1592,7 @@
         <!-- Intrainz -->
         <div class="glass-card gs_reveal hover-target">
           <div style="display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem;">
-            <img src="https://logo.clearbit.com/intrainz.com" alt="Intrainz Logo"
+            <img src="https://logo.clearbit.com/intrainz.com" alt="Intrainz Logo" loading="lazy"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
               style="width: 56px; height: 56px; border-radius: 12px; object-fit: contain; background: #fff; padding: 6px; flex-shrink: 0;">
             <div style="display:none; width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg,#14b8a6,#6366f1); align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; color:#fff; flex-shrink:0;">IZ</div>
@@ -973,7 +1618,7 @@
         <!-- My Job Grow / IIT Bombay TechFest -->
         <div class="glass-card gs_reveal hover-target">
           <div style="display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.2rem;">
-            <img src="https://logo.clearbit.com/techfest.org" alt="IIT Bombay TechFest Logo"
+            <img src="https://logo.clearbit.com/techfest.org" alt="IIT Bombay TechFest Logo" loading="lazy"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
               style="width: 56px; height: 56px; border-radius: 12px; object-fit: contain; background: #fff; padding: 6px; flex-shrink: 0;">
             <div style="display:none; width:56px; height:56px; border-radius:12px; background: linear-gradient(135deg,#f59e0b,#ec4899); align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; color:#fff; flex-shrink:0;">MJ</div>
@@ -1177,6 +1822,56 @@
   
   <button id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="hover-target"><i class="fas fa-arrow-up"></i></button>
 
+  <!-- ===== AI CHATBOT ===== -->
+
+  <!-- Chatbot floating stack (wrapper keeps launcher, badge, wave and greeting from overlapping page content) -->
+  <div id="chatbot-floating">
+    <div id="chatbot-greeting">
+      <div class="greeting-bubble" id="gb-0">Hi Recruiter! 👋 Let's talk!</div>
+      <div class="greeting-bubble" id="gb-1">Ask me about Pruthviraj! 🤖</div>
+      <div class="greeting-bubble" id="gb-2">IIT Madras Fellow 🏛️</div>
+      <div class="greeting-bubble" id="gb-3">International Intern 🌍 USA</div>
+      <div class="greeting-bubble" id="gb-4">15+ Projects • 25+ Certs ✨</div>
+    </div>
+
+    <div id="chatbot-recruiter-badge">🤖 Ask Pruthviraj's AI!</div>
+
+    <div id="chatbot-wave">👋</div>
+
+    <button id="chatbot-launcher" aria-label="Open AI Chatbot">
+      <i class="fas fa-robot chat-icon"></i>
+      <i class="fas fa-times close-icon"></i>
+    </button>
+  </div>
+
+  <div id="chatbot-window" role="dialog" aria-label="Portfolio AI Assistant">
+    <div class="chatbot-header" id="chatbot-drag-handle">
+      <div class="chatbot-avatar"><i class="fas fa-robot"></i></div>
+      <div class="chatbot-header-info">
+        <h4>⚡ Pruthviraj's AI</h4>
+        <div class="chatbot-status-bar">
+          <div class="status-dot"></div>
+          <span>AI Assistant • Online • Ask anything!</span>
+        </div>
+      </div>
+      <div class="chatbot-drag-hint"><i class="fas fa-grip-lines-vertical"></i></div>
+    </div>
+
+    <div class="chatbot-messages" id="chatbot-messages"></div>
+
+    <div class="chat-typing" id="chat-typing" style="display:none; padding-bottom:0.5rem;">
+      <div class="msg-avatar" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.72rem;flex-shrink:0;"><i class="fas fa-robot"></i></div>
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="chatbot-suggestions" id="chatbot-suggestions"></div>
+
+    <div class="chatbot-input-area">
+      <input type="text" id="chatbot-input" placeholder="Type your question..." autocomplete="off">
+      <button id="chatbot-send" aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
   <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
@@ -1292,27 +1987,47 @@
       else scrollTopBtn.classList.remove('visible');
     });
 
-    // --- GSAP Animations ---
+    // --- GSAP Animations (Enhanced Dynamic Scrolling) ---
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Reveal Animations
-    gsap.utils.toArray('.gs_reveal').forEach(elem => {
-      let x = 0, y = 50;
-      if (elem.classList.contains('gs_reveal_fromLeft')) { x = -100; y = 0; }
-      else if (elem.classList.contains('gs_reveal_fromRight')) { x = 100; y = 0; }
-      
-      gsap.fromTo(elem, 
-        { x: x, y: y, autoAlpha: 0 },
-        { duration: 1, x: 0, y: 0, autoAlpha: 1, ease: "power2.out", 
-          scrollTrigger: {
-            trigger: elem,
-            start: "top 85%", // Trigger when top of element hits 85% of viewport
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
+
+    // Auto-add dynamic slide classes to timeline items for extra flair
+    const isMobileView = window.innerWidth <= 768;
+    document.querySelectorAll('.timeline-item').forEach((item, index) => {
+      if (isMobileView) {
+        item.classList.add('gs_reveal_fromLeft'); // On mobile they are all left-aligned
+      } else {
+        if (index % 2 === 0) item.classList.add('gs_reveal_fromLeft');
+        else item.classList.add('gs_reveal_fromRight');
+      }
     });
 
+    ScrollTrigger.batch(".gs_reveal", {
+      start: "top 88%",
+      onEnter: batch => {
+        batch.forEach((elem, i) => {
+          let x = 0, y = 60, scale = 1;
+          if (elem.classList.contains('gs_reveal_fromLeft')) { x = -100; y = 0; }
+          else if (elem.classList.contains('gs_reveal_fromRight')) { x = 100; y = 0; }
+          else { scale = 0.95; } // slight zoom for normal reveals
+
+          gsap.fromTo(elem,
+            { autoAlpha: 0, x: x, y: y, scale: scale },
+            { autoAlpha: 1, x: 0, y: 0, scale: 1, duration: 0.8, ease: "power3.out", delay: i * 0.15, overwrite: true }
+          );
+        });
+      },
+      onLeaveBack: batch => {
+        batch.forEach(elem => {
+          let x = 0, y = 60, scale = 1;
+          if (elem.classList.contains('gs_reveal_fromLeft')) { x = -100; y = 0; }
+          else if (elem.classList.contains('gs_reveal_fromRight')) { x = 100; y = 0; }
+          else { scale = 0.95; }
+          
+          gsap.set(elem, { autoAlpha: 0, x: x, y: y, scale: scale, overwrite: true });
+        });
+      }
+    });
+    
     // --- Animated Counters ---
     const counters = document.querySelectorAll('.counter-val');
     ScrollTrigger.create({
@@ -1361,6 +2076,293 @@
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('active');
     }
+
+    // ==========================================================================
+    //  AI CHATBOT — KNOWLEDGE BASE & ENGINE
+    // ==========================================================================
+    const CHATBOT_KB = [
+      // --- Identity ---
+      {
+        keys: ['who are you','who is pruthviraj','tell me about','introduce','about him','about yourself','about you', 'about pruthviraj', 'hi', 'hello', 'hey', 'greetings'],
+        answer: `👋 Hi there! I'm an AI assistant for <strong>Pruthviraj Vikas Tarode</strong> — an AI Engineer, Machine Learning Researcher, and <strong>IIT Madras NPTEL Postbac Research Fellow</strong> from India.<br><br>He specialises in Deep Learning, NLP, LLMs, Computer Vision, and Agentic AI. He's currently an International AI Technology Intern at <strong>Digital Dada, USA</strong> and a Research Fellow at <strong>IIT Madras</strong>. Ask me about his projects, skills, experience, or achievements! 🚀`
+      },
+      // --- IIT Madras / Research ---
+      {
+        keys: ['iit','iit madras','research','nptel','fellowship','postbac','pre-doctoral','ndt','defect'],
+        answer: `🏛️ <strong>IIT Madras NPTEL Postbac Fellowship</strong><br><br>Pruthviraj was selected for the prestigious <strong>NPTEL Postbac / Pre-Doctoral Fellowship</strong> at IIT Madras — one of India's top engineering institutes.<br><br>📌 <strong>Research Topic:</strong> <em>AI-enabled Intelligence Framework for NDT Defect Detection</em><br>🎓 <strong>Supervisor:</strong> Prof. Ranjit Bauri<br>🔬 <strong>Areas:</strong> Computer Vision, Deep Learning, Industrial AI, Explainable AI, Radiographic Image Analysis<br><br>This is a highly competitive national-level research programme. He can view the <a href="NPTELPBF20260008.pdf" target="_blank">official fellowship letter</a> too!`
+      },
+      // --- Education ---
+      {
+        keys: ['education','college','university','btech','degree','mgm','nanded','study','studied'],
+        answer: `🎓 <strong>Education</strong><br><br><strong>BTech in Computer Science Engineering (CSE)</strong><br>📍 MGM's College of Engineering, Nanded, Maharashtra, India<br>📅 Batch: 2022 – 2026<br><br>He was awarded the <strong>Gem of MGM Award (2025)</strong> and the <strong>Academic Excellence Award of ₹25,000</strong> during his graduation ceremony for outstanding performance and his IIT Madras fellowship selection.`
+      },
+      // --- Experience ---
+      {
+        keys: ['experience','internship','work','job','digital dada','infosys','wixflux','intrainz','professional'],
+        answer: `💼 <strong>Professional Experience</strong><br><br>1️⃣ <strong>AI Technology Intern</strong> — Digital Dada, Fort Lauderdale, FL, USA (Remote)<br>&nbsp;&nbsp;&nbsp;📅 Feb 2026 – Aug 2026 | Reporting to CEO Dwayne Lewis<br>&nbsp;&nbsp;&nbsp;→ AI automation, lead/CRM workflows, agentic AI systems<br><br>2️⃣ <strong>AI Project Intern</strong> — Infosys (Virtual Internship 6.0)<br>&nbsp;&nbsp;&nbsp;📅 Feb – Apr 2026 | Deep learning image stylization<br><br>3️⃣ <strong>ML & AI Intern</strong> — Wixflux Technologies<br>&nbsp;&nbsp;&nbsp;📅 Dec 2025 – Feb 2026 | End-to-end ML pipelines<br><br>4️⃣ <strong>AI Intern</strong> — Intrainz<br>&nbsp;&nbsp;&nbsp;📅 Aug – Oct 2025 | Fine-tuned models on 10,000+ records, +18% accuracy<br><br>5️⃣ <strong>AI Intern</strong> — My Job Grow · IIT Bombay TechFest<br>&nbsp;&nbsp;&nbsp;📅 Sep – Nov 2024 | Optimized Scikit-Learn pipelines, +20% performance`
+      },
+      // --- Digital Dada specific ---
+      {
+        keys: ['digital dada','usa','international','dwayne','fort lauderdale'],
+        answer: `🌍 <strong>International Internship at Digital Dada, USA</strong><br><br>Pruthviraj is an <strong>International AI Technology Intern</strong> at Digital Dada, headquartered in Fort Lauderdale, Florida — reporting directly to the CEO, <strong>Dwayne Lewis</strong>.<br><br>🛠️ Key responsibilities:<br>• Configuring AI automation workflows (lead response, follow-up, appointments)<br>• Setting up AI agents using n8n, Go High Level, OpenClaw<br>• CRM integrations and AI deployment monitoring<br>• Supporting the company's transition to full AI automation<br><br>Duration: <strong>Feb 2026 – Aug 2026</strong> (Remote)`
+      },
+      // --- Projects ---
+      {
+        keys: ['project','projects','built','developed','portfolio','apps','application'],
+        answer: `🛠️ <strong>Featured Projects</strong><br><br>1️⃣ <strong>Agentic AI Travel Planner</strong> — React + LangChain + OpenAI API. Real-time personalised travel itineraries. <a href="https://agentic-ai-travel-planner.onrender.com/" target="_blank">Live Demo ↗</a><br><br>2️⃣ <strong>ShopSense AI</strong> — Collaborative filtering product recommendation system. Python + Scikit-Learn + Streamlit. <a href="https://shopsense-ai-recommendation-system-dwe5jcslywqwj9fud6qxys.streamlit.app/" target="_blank">Live Demo ↗</a><br><br>3️⃣ <strong>Toonify AI SaaS</strong> — Neural network image cartoonization platform. TensorFlow + FastAPI + React.<br><br>4️⃣ <strong>Romania AI</strong> — AI-driven application for intelligent data processing.<br><br>5️⃣ <strong>Melissa AI</strong> — NLP conversational AI system with backend APIs. <a href="https://melissa-ai.vercel.app/demo.html" target="_blank">Live Demo ↗</a><br><br>6️⃣ <strong>Wumpus World – NEURA</strong> — AI logic game with deductive reasoning. <a href="https://effortless-liger-49c890.netlify.app/" target="_blank">Play ↗</a><br><br>7️⃣ <strong>Mario Shooter Web</strong> — Browser-based game<br>8️⃣ <strong>Sweet Shop Management</strong> — Full-stack inventory & analytics platform`
+      },
+      // --- Skills ---
+      {
+        keys: ['skill','skills','technology','technologies','tech stack','tools','programming','language','framework'],
+        answer: `⚙️ <strong>Technical Skills</strong><br><br>🐍 <strong>Languages:</strong> Python, Java, TypeScript, SQL<br><br>🤖 <strong>AI & ML:</strong> Machine Learning, Deep Learning, NLP, LLMs, Computer Vision, Scikit-Learn, TensorFlow, LangChain, Agentic AI<br><br>🖥️ <strong>Backend & APIs:</strong> Node.js, Express.js, REST APIs, AJAX<br><br>☁️ <strong>Cloud & DevOps:</strong> AWS (S3, EC2, Lambda, VPC, VPN), Azure, Google App Engine, Supabase<br><br>🔧 <strong>Tools & Platforms:</strong> Git, GitHub, Linux, Postman, n8n, OpenClaw, Go High Level<br><br>📊 <strong>Data Analytics:</strong> SQL, Excel, Power BI, Python`
+      },
+      // --- Python ---
+      {
+        keys: ['python','tensorflow','pytorch','scikit','langchain','machine learning algorithm'],
+        answer: `🐍 <strong>Python & ML Frameworks</strong><br><br>Python is Pruthviraj's primary language. He is proficient in:<br>• <strong>TensorFlow</strong> — Deep learning model training & deployment<br>• <strong>Scikit-Learn</strong> — Classical ML algorithms & pipelines<br>• <strong>LangChain</strong> — LLM orchestration & Agentic AI<br>• <strong>OpenAI API</strong> — GPT integration & prompt engineering<br>• <strong>NumPy, Pandas, Matplotlib</strong> — Data science stack<br>• <strong>FastAPI, Flask</strong> — API development`
+      },
+      // --- Certifications ---
+      {
+        keys: ['certification','certifications','certificate','certified','nptel','swayam','udemy','iit roorkee'],
+        answer: `📜 <strong>Certifications (25+)</strong><br><br>🏅 <strong>Introduction to Machine Learning</strong> — NPTEL, IIT Madras<br>🏅 <strong>Cloud Computing</strong> — NPTEL, IIT Madras<br>🏅 <strong>AI/ML Using Python</strong> — SWAYAM Plus<br>🏅 <strong>Data Science & Artificial Intelligence</strong> — IIT Roorkee (E&ICT Academy)<br>🏅 <strong>Complete Full Stack Developer</strong> — Udemy<br><br>He has earned <strong>25+ certifications</strong> spanning AI, ML, Cloud, and Full Stack Development from top institutions!`
+      },
+      // --- Achievements ---
+      {
+        keys: ['achievement','achievements','award','awards','recognition','gem','discipline star','cricket','mgm award','trophy'],
+        answer: `🏆 <strong>Achievements & Recognition</strong><br><br>⭐ <strong>NPTEL Discipline Star</strong> — IIT Madras (Jul–Dec 2024)<br>&nbsp;&nbsp;&nbsp;→ Excellence across 50+ weeks of certified coursework<br><br>🎖️ <strong>NPTEL Enthusiast</strong> — IIT Madras (Jul–Dec 2024)<br>&nbsp;&nbsp;&nbsp;→ Consistent performance across multiple NPTEL courses<br><br>💎 <strong>Gem of MGM Award (2025)</strong><br>&nbsp;&nbsp;&nbsp;→ Institutional recognition for academic excellence<br><br>💰 <strong>Academic Excellence Award — ₹25,000</strong><br>&nbsp;&nbsp;&nbsp;→ Felicitated during graduation for IIT Madras fellowship selection<br><br>🏏 <strong>Inter Zonal University Cricket Selection</strong><br>&nbsp;&nbsp;&nbsp;→ Selected at Solapur Zone University level`
+      },
+      // --- Contact ---
+      {
+        keys: ['contact','email','reach','hire','connect','linkedin','github','instagram','social','collaborate'],
+        answer: `📬 <strong>Get in Touch with Pruthviraj</strong><br><br>📧 <strong>Email:</strong> <a href="mailto:pruthvirajtarode456@gmail.com">pruthvirajtarode456@gmail.com</a><br><br>🔗 <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/pruthviraj-tarode-616ab1258/" target="_blank">linkedin.com/in/pruthviraj-tarode</a><br><br>💻 <strong>GitHub:</strong> <a href="https://github.com/pruthvirajtarode" target="_blank">github.com/pruthvirajtarode</a><br><br>📸 <strong>Instagram:</strong> <a href="https://www.instagram.com/pruthvirajtarode_45/" target="_blank">@pruthvirajtarode_45</a><br><br>He's <strong>actively open</strong> to AI Engineering roles, research collaborations, and exciting projects! 🚀`
+      },
+      // --- Resume ---
+      {
+        keys: ['resume','cv','download','download resume'],
+        answer: `📄 <strong>Resume / CV</strong><br><br>You can download Pruthviraj's latest resume here:<br><br><a href="https://drive.google.com/file/d/1Oo4BmmdFQpbvDmgmpKZmXfuyJGnpkvH4/view?usp=sharing" target="_blank">📥 Download Resume (Google Drive) ↗</a><br><br>The resume covers his AI/ML expertise, IIT Madras fellowship, international internship experience, 15+ projects, 25+ certifications, and notable achievements.`
+      },
+      // --- Goals / Future ---
+      {
+        keys: ['goal','future','plan','ms','phd','higher education','aspiration','dream','aim'],
+        answer: `🚀 <strong>Future Goals & Aspirations</strong><br><br>Pruthviraj aims to pursue an <strong>MS or PhD</strong> at a top global university to further his contributions to AI research.<br><br>His current focus areas include:<br>• 🔬 Industrial AI & NDT research (IIT Madras)<br>• 🤖 Agentic AI systems & LLM applications<br>• 🌍 International AI deployment (Digital Dada, USA)<br>• 📚 Publishing research papers in top AI conferences<br><br>He is passionate about making AI more accessible and impactful at a global scale! 🌐`
+      },
+      // --- Stats ---
+      {
+        keys: ['stats','numbers','how many','count','total','projects count','internship count'],
+        answer: `📊 <strong>Pruthviraj by the Numbers</strong><br><br>🛠️ <strong>15+</strong> AI/ML & Full Stack Projects<br>💼 <strong>10+</strong> Internships & Industry Roles<br>📜 <strong>25+</strong> Certifications from top institutions<br>⏰ <strong>1000+</strong> Hours of hands-on AI research<br>🏆 <strong>5+</strong> Major awards & recognitions<br>🌍 <strong>1</strong> International internship (USA)<br>🏛️ <strong>1</strong> National Research Fellowship (IIT Madras)`
+      },
+      // --- Location ---
+      {
+        keys: ['location','where','city','solapur','maharashtra','india','based'],
+        answer: `📍 <strong>Location</strong><br><br>Pruthviraj is based in <strong>Solapur, Maharashtra, India</strong>.<br><br>He is currently working remotely as an International AI Intern for <strong>Digital Dada</strong> in Fort Lauderdale, FL, USA — bridging global AI innovation from India! 🇮🇳🌐`
+      },
+    ];
+
+    const SUGGESTIONS = [
+      '👤 About Pruthviraj',
+      '🛠️ His Projects',
+      '💼 Experience',
+      '🏛️ IIT Madras',
+      '⚙️ Skills',
+      '📜 Certifications',
+      '🏆 Achievements',
+      '📬 Contact Info',
+      '📄 Resume',
+      '🚀 Future Goals',
+    ];
+
+    function chatbotGetResponse(query) {
+      const q = query.toLowerCase().trim();
+      for (const entry of CHATBOT_KB) {
+        if (entry.keys.some(k => q.includes(k))) return entry.answer;
+      }
+      // Fallback
+      return `🤔 I'm not sure about that specific query, but I know a lot about Pruthviraj! Try asking about his:<br><br>• <em>Projects</em> 🛠️ • <em>Skills</em> ⚙️ • <em>Experience</em> 💼<br>• <em>IIT Madras Fellowship</em> 🏛️ • <em>Achievements</em> 🏆 • <em>Contact</em> 📬`;
+    }
+
+    function chatAddMessage(text, sender) {
+      const msgs = document.getElementById('chatbot-messages');
+      const wrap = document.createElement('div');
+      wrap.className = `chat-msg ${sender}`;
+      const avatarIcon = sender === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+      wrap.innerHTML = `
+        <div class="msg-avatar">${avatarIcon}</div>
+        <div class="msg-bubble">${text}</div>
+      `;
+      msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function chatShowTyping() {
+      document.getElementById('chat-typing').style.display = 'flex';
+      const msgs = document.getElementById('chatbot-messages');
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+    function chatHideTyping() {
+      document.getElementById('chat-typing').style.display = 'none';
+    }
+
+    function chatbotRespond(userText) {
+      chatAddMessage(userText, 'user');
+      chatShowTyping();
+      setTimeout(() => {
+        chatHideTyping();
+        const ans = chatbotGetResponse(userText);
+        chatAddMessage(ans, 'bot');
+      }, 900 + Math.random() * 500);
+    }
+
+    function chatbotSend() {
+      const input = document.getElementById('chatbot-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      chatbotRespond(text);
+    }
+
+    // Build suggestion chips
+    (function buildSuggestions() {
+      const container = document.getElementById('chatbot-suggestions');
+      SUGGESTIONS.forEach(s => {
+        const chip = document.createElement('button');
+        chip.className = 'suggestion-chip';
+        chip.textContent = s;
+        chip.addEventListener('click', () => chatbotRespond(s));
+        container.appendChild(chip);
+      });
+    })();
+
+    // Send on Enter
+    document.getElementById('chatbot-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') chatbotSend();
+    });
+    document.getElementById('chatbot-send').addEventListener('click', chatbotSend);
+
+    // ---- Greeting bubble rotator ----
+    const greetingEl     = document.getElementById('chatbot-greeting');
+    const waveEl         = document.getElementById('chatbot-wave');
+    const recruiterBadge = document.getElementById('chatbot-recruiter-badge');
+    const bubbles        = document.querySelectorAll('.greeting-bubble');
+    let   gbIdx          = 0;
+    let   greetTimer     = null;
+
+    function showNextBubble() {
+      bubbles.forEach(b => b.classList.remove('show'));
+      bubbles[gbIdx].classList.add('show');
+      gbIdx = (gbIdx + 1) % bubbles.length;
+    }
+    function startGreeting() {
+      showNextBubble();
+      greetTimer = setInterval(showNextBubble, 3000);
+    }
+    function stopGreeting() {
+      clearInterval(greetTimer);
+      bubbles.forEach(b => b.classList.remove('show'));
+    }
+
+    // Start greeting after 1.2s, auto-stop after 20s
+    setTimeout(() => {
+      startGreeting();
+      setTimeout(() => stopGreeting(), 20000);
+    }, 1200);
+
+    // ---- Toggle chatbot window ----
+    const chatLauncher = document.getElementById('chatbot-launcher');
+    const chatWindow   = document.getElementById('chatbot-window');
+    let   chatOpened   = false;
+
+    chatLauncher.addEventListener('click', () => {
+      const isOpen = chatWindow.classList.toggle('open');
+      chatLauncher.classList.toggle('open', isOpen);
+
+      if (isOpen) {
+        stopGreeting();
+        waveEl.classList.add('hidden');
+        greetingEl.style.display = 'none';
+        if (recruiterBadge) recruiterBadge.classList.add('hidden');
+
+        if (!chatOpened) {
+          chatOpened = true;
+          setTimeout(() => {
+            chatAddMessage(`👋 Hello! I'm Pruthviraj's <strong>AI Portfolio Assistant</strong>.<br><br>I know everything about his <strong>IIT Madras Research Fellowship</strong>, <strong>International Internship (USA)</strong>, 15+ projects, skills and more!<br><br>💡 Use the chips below or type your question! 😊`, 'bot');
+          }, 380);
+        }
+      } else {
+        waveEl.classList.remove('hidden');
+        greetingEl.style.display = 'block';
+        if (recruiterBadge) recruiterBadge.classList.remove('hidden');
+        startGreeting();
+        setTimeout(() => stopGreeting(), 14000);
+      }
+    });
+
+    // ---- Draggable chat window ----
+    (function makeDraggable() {
+      const handle = document.getElementById('chatbot-drag-handle');
+      if (!handle) return;
+
+      let isDragging = false, startX, startY, initLeft, initBottom;
+
+      handle.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = chatWindow.getBoundingClientRect();
+        initLeft   = rect.left;
+        initBottom = window.innerHeight - rect.bottom;
+        chatWindow.style.transition = 'none';
+        document.body.style.userSelect = 'none';
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        let newLeft   = initLeft   + dx;
+        let newBottom = initBottom - dy;
+
+        // Clamp within viewport
+        newLeft   = Math.max(0, Math.min(window.innerWidth  - chatWindow.offsetWidth,  newLeft));
+        newBottom = Math.max(0, Math.min(window.innerHeight - chatWindow.offsetHeight, newBottom));
+
+        chatWindow.style.left   = newLeft + 'px';
+        chatWindow.style.bottom = newBottom + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        chatWindow.style.transition = '';
+        document.body.style.userSelect = '';
+      });
+
+      // Touch support
+      handle.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        isDragging = true;
+        startX = t.clientX; startY = t.clientY;
+        const rect = chatWindow.getBoundingClientRect();
+        initLeft   = rect.left;
+        initBottom = window.innerHeight - rect.bottom;
+        chatWindow.style.transition = 'none';
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const t = e.touches[0];
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        let newLeft   = Math.max(0, Math.min(window.innerWidth  - chatWindow.offsetWidth,  initLeft   + dx));
+        let newBottom = Math.max(0, Math.min(window.innerHeight - chatWindow.offsetHeight, initBottom - dy));
+        chatWindow.style.left   = newLeft + 'px';
+        chatWindow.style.bottom = newBottom + 'px';
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        isDragging = false;
+        chatWindow.style.transition = '';
+      });
+    })();
   </script>
 </body>
 </html>
