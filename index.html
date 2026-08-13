@@ -477,10 +477,10 @@
       #scrollTop { right: 110px; left: auto; bottom: 30px; width: 46px; height: 46px; font-size: 1.1rem; }
     }
     @media (max-width: 768px) {
-      #scrollTop { right: 23px; bottom: 90px; width: 44px; height: 44px; font-size: 1rem; }
+      #scrollTop { right: 85px; bottom: 23px; width: 44px; height: 44px; font-size: 1rem; }
     }
     @media (max-width: 480px) {
-      #scrollTop { right: 19px; bottom: 82px; }
+      #scrollTop { right: 80px; bottom: 19px; }
     }
 
     /* Lightbox */
@@ -1095,13 +1095,11 @@
       #chatbot-floating { right: 28px; }
     }
     @media (max-width: 768px) {
-      /* Move chatbot to the right corner; scrollTop button is on the left — no collision */
+      /* Move chatbot to the right corner; scrollTop button is placed to its left */
       #chatbot-floating { right: 16px; bottom: 16px; gap: 8px; }
       #chatbot-launcher { width: 58px; height: 58px; }
-      #chatbot-recruiter-badge { display: none; } /* hide badge on small screens to reduce clutter */
-      #chatbot-greeting { display: none; }        /* completely hide greeting container to prevent empty gap */
-      .greeting-bubble { display: none; }         /* hide greeting bubbles on mobile */
-      #chatbot-wave { display: none; }            /* hide wave emoji on mobile */
+      /* Chatbot greeting and badge are now visible on mobile */
+      #chatbot-recruiter-badge { font-size: 0.65rem; } /* scale down slightly */
     }
     @media (max-width: 480px) {
       #chatbot-floating { right: 12px; bottom: 12px; }
